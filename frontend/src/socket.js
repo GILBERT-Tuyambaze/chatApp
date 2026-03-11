@@ -1,12 +1,12 @@
-import { io } from "socket.io-client";
+const apiUrl = import.meta.env.VITE_API_URL;
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
-export const socket = io(SOCKET_URL, {
-  autoConnect: false, // okay
-});
+async function login(email, password) {
+  const res = await fetch(`${apiUrl}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-export const connectSocket = (userId, partnerId) => {
-  socket.auth = { userId };
-  socket.connect();
-  socket.emit("join_room", { userId, partnerId });
-};
+  if (!res.ok) throw new Error("Login failed");
+  return await res.json();
+}
