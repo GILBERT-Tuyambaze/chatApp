@@ -1,4 +1,7 @@
+node_modules
+node_modules
 .env
 dist
 build
-node_modules
+coverage
+*.log
