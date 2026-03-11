@@ -1,12 +1,12 @@
-const apiUrl = import.meta.env.VITE_API_URL;
+import { io } from "socket.io-client";
 
-async function login(email, password) {
-  const res = await fetch(`${apiUrl}/api/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+const SOCKET_URL = import.meta.env.VITE_API_URL;
+export const socket = io(SOCKET_URL, {
+  autoConnect: false, // okay
+});
 
-  if (!res.ok) throw new Error("Login failed");
-  return await res.json();
-}
+export const connectSocket = (userId, partnerId) => {
+  socket.auth = { userId };
+  socket.connect();
+  socket.emit("join_room", { userId, partnerId });
+};
