@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+// Test comment for git detection
 import { useAuth }          from "./context/AuthContext";
 import { useTheme }         from "./context/ThemeContext";
 import { MessagesProvider } from "./context/MessagesContext";
@@ -142,17 +143,29 @@ function ChatApp() {
         setIncomingRequests(incoming || []);
         setOutgoingRequests(outgoing || []);
       });
-    api.getPartners()
-      .then(({ partners: ps }) => {
-        setPartners(ps);
-        if (ps && ps.length > 0) {
-          setActivePartner(ps[0]);
-          setConnectionStatus("connected");
-        } else {
-          setConnectionStatus("not_connected");
-        }
-      })
-      .catch(err => setPartnerError(err.message));
+      api.getPartners()
+        .then(async ({ partners: ps }) => {
+          // Fetch last message for each partner
+          const partnersWithLastMsg = await Promise.all(ps.map(async (p) => {
+            try {
+              const res = await api.getMessages(p._id);
+              const lastMsg = res.messages && res.messages.length > 0 ? res.messages[res.messages.length - 1] : null;
+              return { ...p, lastMessageTime: lastMsg ? new Date(lastMsg.createdAt).getTime() : 0 };
+            } catch {
+              return { ...p, lastMessageTime: 0 };
+            }
+          }));
+          // Sort by last message time (desc)
+          partnersWithLastMsg.sort((a, b) => b.lastMessageTime - a.lastMessageTime);
+          setPartners(partnersWithLastMsg);
+          if (partnersWithLastMsg && partnersWithLastMsg.length > 0) {
+            setActivePartner(partnersWithLastMsg[0]);
+            setConnectionStatus("connected");
+          } else {
+            setConnectionStatus("not_connected");
+          }
+        })
+        .catch(err => setPartnerError(err.message));
   }, [user]);
 
   // Connection request actions

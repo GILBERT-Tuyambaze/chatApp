@@ -43,8 +43,8 @@ export default function InstallBanner() {
       transition: "opacity 0.2s"
     }}>
       <span style={{ flex: 1 }}>
-        {mode === "desktop" ? (
-          <> Download the <a href="https://github.com/GILBERT-Tuyambaze/private-couple-chat/releases" target="_blank" rel="noopener" style={{ color: "#00bcd4", fontWeight: 600 }}>desktop app</a> for the best experience!</>
+          {mode === "desktop" ? (
+            <> Download the <a href="/downloads/Us%20Always%20Setup%201.0.0.exe" download style={{ color: "#00bcd4", fontWeight: 600 }}>desktop app</a> for the best experience!</>
         ) : (
           <> Add to home screen for a native feel! <span style={{ color: "#00bcd4", fontWeight: 600 }}>Tap browser menu  "Add to Home Screen"</span></>
         )}
